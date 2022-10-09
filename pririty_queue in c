@@ -1,0 +1,111 @@
+#include<stdio.h>
+#include<limits.h>
+struct process{
+    int key;
+    char data;
+};
+typedef struct process process;
+
+void swap(int *a, int *b){
+    int temp=*a;
+    *a=*b;
+    *b=temp;
+}
+void max_heapify(process proc_arr[],int i,int n){
+  int largest=i;
+  if(2*i+1<n && proc_arr[largest].key<proc_arr[2*i+1].key){
+    largest=2*i+1;
+  }
+  if(2*i+2<n && proc_arr[largest].key<proc_arr[2*i+2].key){
+    largest=2*i+2;
+  }
+  if(largest!=i){
+    char c;
+    int temp;
+    swap(&proc_arr[i].key,&proc_arr[largest].key);
+    max_heapify(proc_arr,largest,n);
+  }
+}
+
+
+process find_max(process proc_arr[] , int n){
+    if(n<1){
+       printf("given process array is empty");
+        process temp;
+        return temp;
+    }
+
+    return proc_arr[1];
+}
+
+process extract_max(process proc_arr[], int n){
+    if(n<1){
+       printf("given process array is empty");
+        process temp;
+        return temp;
+    }
+
+    process temp=proc_arr[1];
+    proc_arr[1]=proc_arr[n];
+ n=n-1;
+    max_heapify(proc_arr,1,n);
+   
+    return temp;
+
+}
+
+void increase_max(process proc_arr[],int n,int i,int k){
+    if (i>n){
+        printf("invalid");// you can write (return;) instead of (printf("invalid");)
+    }
+    else if(proc_arr[i].key>k)
+    {
+       printf("invalid");// you can write (return;) instead of (printf("invalid");)
+    }
+    else{
+        proc_arr[i].key=k;
+           while(i>1 && proc_arr[i/2].key<k){
+            process temp= proc_arr[i];
+            proc_arr[i]=proc_arr[i/2];
+            proc_arr[i/2]=temp;
+            i/=2;
+        } 
+    }
+    
+}
+void insert(process proc_arr[],int n,process new_p){
+
+   n=n+1;
+    proc_arr[n]=new_p;
+
+    int k=new_p.key;
+    proc_arr[n].key=INT_MIN;
+
+    increase_max(proc_arr,n,n,k);//n=size and n=indx respectively
+
+    
+}
+int main()
+{ 
+     int n;
+   
+  
+    printf("enter the number of process: ");
+    scanf("%d",&n); 
+    process proc_arr[n];
+    process new_p;
+    printf("enter the key and data of %d process ",n);
+    for (int i = 0; i < n; i++)
+    {
+         scanf("%d%s",&new_p.key,&new_p.data);
+         insert(proc_arr,i,new_p);
+
+    }
+	printf("extract max:");
+   new_p =extract_max(proc_arr,n);
+    printf("%d  %c",new_p.key,new_p.data);
+    
+   
+    return 0;
+}
+
